@@ -36,7 +36,7 @@ docker compose -f quickstart.yml up --build
 
 ```sh
 curl --request POST \
-  --url http://127.0.0.1:4445/admin/clients \
+  --url http://localhost:4445/admin/clients \
   --header 'Content-Type: application/json' \
   --data '{
   "client_name": "ory-poc",
@@ -45,7 +45,7 @@ curl --request POST \
     "refresh_token"
   ],
   "redirect_uris": [
-    "http://127.0.0.1:5555/callback"
+    "http://localhost:5555/callback"
   ],
   "response_types": [
     "code",
@@ -59,21 +59,21 @@ curl --request POST \
 3. In a browser, request an authorization code by opening:
 
 ```
-http://127.0.0.1:4444/oauth2/auth?client_id=$CLIENT_ID&redirect_uri=http%3A%2F%2F127.0.0.1%3A5555%2Fcallback&response_type=code&state=1102398157&scope=offline%20openid
+http://localhost:4444/oauth2/auth?client_id=$CLIENT_ID&redirect_uri=http%3A%2F%2Flocalhost%3A5555%2Fcallback&response_type=code&state=1102398157&scope=offline%20openid
 ```
 
-Replace `$CLIENT_ID` with the client ID generated in Step 2. After registering and logging in, you will be redirected to the non-existent page `http://127.0.0.1:5555/callback?code=ory_ac...`. Record the code query parameter.
+Replace `$CLIENT_ID` with the client ID generated in Step 2. After registering and logging in, you will be redirected to the non-existent page `http://localhost:5555/callback?code=ory_ac...`. Record the code query parameter.
 
 4. Exchange the code for an auth token, replacing $CLIENT_ID and $AUTH_CODE.
 
 ```sh
 curl --request POST \
-  --url http://127.0.0.1:4444/oauth2/token \
+  --url http://localhost:4444/oauth2/token \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data client_id=$CLIENT_ID \
   --data code=$AUTH_CODE \
   --data grant_type=authorization_code \
-  --data redirect_uri=http://127.0.0.1:5555/callback
+  --data redirect_uri=http://localhost:5555/callback
 ```
 
 ## Versions
@@ -88,7 +88,7 @@ This demo has been tested with the following software versions:
 
 ## Ports
 
-The following ports are used at http://127.0.0.1:
+The following ports are used at http://localhost:
 
 | Port | Description                                       |
 | ---- | ------------------------------------------------- |

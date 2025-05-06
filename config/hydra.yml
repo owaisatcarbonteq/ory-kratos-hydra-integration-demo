@@ -4,14 +4,13 @@ serve:
 
 urls:
   self:
-    issuer: http://127.0.0.1:4444
-  consent: http://127.0.0.1:4455/consent
-  login: http://127.0.0.1:4455/login
-  logout: http://127.0.0.1:4455/logout
+    issuer: http://localhost:4444
+  consent: http://localhost:4455/consent
+  login: http://localhost:4455/login
+  logout: http://localhost:4455/logout
   identity_provider:
-    publicUrl: http://127.0.0.1:4433
-    url: http://127.0.0.1:4434
-
+    publicUrl: http://localhost:4433
+    url: http://localhost:4434
 
 secrets:
   system:
