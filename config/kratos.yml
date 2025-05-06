@@ -1,4 +1,4 @@
-version: v1.1.0
+version: v1.2.0
 
 dsn: memory
 
@@ -22,6 +22,45 @@ selfservice:
         min_password_length: 6
         identifier_similarity_check_enabled: false
         haveibeenpwned_enabled: false
+    oidc:
+      enabled: true
+      config:
+        providers:
+          - id: google
+            provider: google
+            client_id: ...
+            client_secret: ...
+            mapper_url: file:///etc/config/kratos/google_mapper.jsonnet
+            scope:
+              - email
+              - profile
+            requested_claims:
+              id_token:
+                email:
+                  essential: true
+                email_verified:
+                  essential: true
+                given_name:
+                  essential: true
+                family_name: null
+                hd: null
+    webauthn:
+      enabled: true
+      config:
+        passwordless: true
+        rp:
+          id: localhost
+          origins:
+            - http://127.0.0.1:4455
+          display_name: Ory
+    passkey:
+      enabled: true
+      config:
+        rp:
+          display_name: ory-poc
+          id: localhost
+          origins:
+            - http://127.0.0.1:4455
 
   flows:
     error:
@@ -58,7 +97,7 @@ secrets:
 
 identity:
   default_schema_id: default
-  schemas: 
+  schemas:
     - id: default
       url: file:///etc/config/kratos/identity.schema.json
 
@@ -68,4 +107,3 @@ courier:
 
 oauth2_provider:
   url: http://hydra:4445
-

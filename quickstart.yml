@@ -1,13 +1,8 @@
-###########################################################################
-#######             FOR DEMONSTRATION PURPOSES ONLY                 #######
-###########################################################################
-
 version: "3.7"
 services:
-
   ### KRATOS ###
   kratos-migrate:
-    image: oryd/kratos:v1.1.0
+    image: oryd/kratos:v1.2.0
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
     volumes:
@@ -23,7 +18,7 @@ services:
     networks:
       - intranet
   kratos-selfservice-ui-node:
-    image: oryd/kratos-selfservice-ui-node:v1.1.0
+    image: oryd/kratos-selfservice-ui-node:v1.2.0
     ports:
       - "4455:4455"
     environment:
@@ -41,10 +36,10 @@ services:
   kratos:
     depends_on:
       - kratos-migrate
-    image: oryd/kratos:v1.1.0
+    image: oryd/kratos:v1.2.0
     ports:
-      - '4433:4433' # public
-      - '4434:4434' # admin
+      - "4433:4433" # public
+      - "4434:4434" # admin
     restart: unless-stopped
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
@@ -62,7 +57,33 @@ services:
       - intranet
 
   ### HYDRA ###
-  
+  # Initialize hydra volume with correct directory structure
+  hydra-init:
+    image: alpine:latest
+    volumes:
+      - hydra-sqlite:/var/lib/sqlite
+    command: sh -c "mkdir -p /var/lib/sqlite && touch /var/lib/sqlite/.initialized && chmod -R 777 /var/lib/sqlite"
+    networks:
+      - intranet
+
+  hydra-migrate:
+    image: oryd/hydra:v2.2.0
+    environment:
+      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
+    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
+    volumes:
+      - type: volume
+        source: hydra-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        source: ./config
+        target: /etc/config/hydra
+    restart: on-failure
+    depends_on:
+      - hydra-init
+    networks:
+      - intranet
   hydra:
     image: oryd/hydra:v2.2.0
     ports:
@@ -83,22 +104,6 @@ services:
     restart: unless-stopped
     depends_on:
       - hydra-migrate
-    networks:
-      - intranet
-  hydra-migrate:
-    image: oryd/hydra:v2.2.0
-    environment:
-      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
-    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
-    volumes:
-      - type: volume
-        source: hydra-sqlite
-        target: /var/lib/sqlite
-        read_only: false
-      - type: bind
-        source: ./config
-        target: /etc/config/hydra
-    restart: on-failure
     networks:
       - intranet
 
