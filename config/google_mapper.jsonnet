@@ -5,10 +5,17 @@ local claims = {
 {
   identity: {
     traits: {
-      [if 'email' in claims && claims.email_verified then 'email' else null]: claims.email,
-      first_name: claims.given_name,
-      last_name: claims.family_name,
-      [if 'hd' in claims && claims.email_verified then 'hd' else null]: claims.hd,
+      email: claims.email,
+      name: {
+        first: claims.given_name,
+        last: claims.family_name
+      },
     },
-  },
+    verified_addresses: std.prune([
+      if 'email' in claims && claims.email_verified then { via: 'email', value: claims.email },
+    ]),
+    metadata_public: {
+      debug_claims: claims
+    }
+  }
 }

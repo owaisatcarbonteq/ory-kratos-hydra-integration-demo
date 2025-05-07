@@ -32,27 +32,17 @@ selfservice:
             client_secret: ...
             mapper_url: file:///etc/config/kratos/google_mapper.jsonnet
             scope:
+              - openid
               - email
               - profile
             requested_claims:
               id_token:
                 email:
                   essential: true
-                email_verified:
-                  essential: true
                 given_name:
                   essential: true
-                family_name: null
-                hd: null
-    webauthn:
-      enabled: true
-      config:
-        passwordless: true
-        rp:
-          id: localhost
-          origins:
-            - http://localhost:4455
-          display_name: Ory
+                family_name:
+                  essential: true
     passkey:
       enabled: true
       config:
@@ -84,7 +74,9 @@ selfservice:
         password:
           hooks:
             - hook: session
-
+        oidc:
+          hooks:
+            - hook: session
 log:
   format: text
   leak_sensitive_values: true
